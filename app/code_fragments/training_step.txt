@@ -1,0 +1,34 @@
+from tqdm import tqdm
+
+def training_step(model, loader, epoch, optimizer, criterion):
+  model.train()
+  training_loss=0.0
+  training_num_correct=0
+  counter=0
+  for i, data in tqdm(enumerate(loader), desc=f'train :: epoch {str(epoch)}', total=len(loader)):
+    counter+=1
+
+    #passing training data through the model
+    img, labels=data
+    img=img.to(device)
+    labels=labels.to(device)
+    preds=model(img)
+
+    #calculating loss
+    curr_loss=criterion(preds, labels)
+    training_loss+=curr_loss.item()
+
+    #calculating accuracy
+    _, preds=torch.max(preds.data, 1)
+    training_num_correct+=(preds==labels).sum().item()
+
+    #backpropagation
+    curr_loss.backward()
+
+    optimizer.step()
+
+  #epoch statistics
+  epoch_loss=training_loss/counter #mean loss
+  epoch_acc=100.*(training_num_correct/len(loader.dataset))
+
+  return epoch_loss, epoch_acc

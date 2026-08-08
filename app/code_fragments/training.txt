@@ -1,0 +1,18 @@
+train_loss_log, train_acc_log=[], []
+valid_loss_log, valid_acc_log=[], []
+best_acc=0.0
+torch.cuda.empty_cache()
+
+for epoch in range(1, EPOCHS+1):
+  tloss, tacc=training_step(model, train_loader, epoch, optimizer, criterion)
+  vloss, vacc=valid_step(model, valid_loader, epoch, criterion)
+
+  train_loss_log.append(tloss)
+  train_acc_log.append(tacc)
+  valid_loss_log.append(vloss)
+  valid_acc_log.append(vacc)
+
+  if vacc>=best_acc:
+    torch.save(model.state_dict(), MODEL_PATH)
+
+  print('-'*50)

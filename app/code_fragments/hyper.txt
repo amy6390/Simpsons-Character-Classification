@@ -1,0 +1,5 @@
+EPOCHS=25
+LEARNING_RATE=0.0001
+device='cuda' if torch.cuda.is_available() else 'cpu'
+MODEL_PATH='best_model.pth'
+BATCH_SIZE=128

@@ -1,0 +1,14 @@
+from torchvision.models import efficientnet_b0
+
+def build_model(num_classes=42, model_name='efficientnetb0', pretrained=True):
+  if pretrained:
+    if model_name=='efficientnetb0':
+      model=efficientnet_b0(weights='DEFAULT')
+
+  #for finetuning, set requires_grad to True in order to train intermediate layers
+  for params in model.parameters():
+    params.requires_grad=True
+
+  #modifying classifier layer to fit num_classes
+  model.classifier[1]=torch.nn.Linear(in_features=1280, out_features=num_classes)
+  return model

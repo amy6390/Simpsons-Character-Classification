@@ -1,0 +1,23 @@
+from torchvision import datasets
+import torch
+from torch.utils.data import Dataset, DataLoader, Subset
+
+root_dir="/kaggle/input/the-simpsons-characters-dataset"
+def get_datasets(pretrained=True):
+  dataset=datasets.ImageFolder(root_dir+"/simpsons_dataset"+"/simpsons_dataset", transform=train_transforms(IMG_SIZE))
+
+  sz=len(dataset)
+  valid_size=int(VALID_SIZE*sz)
+  indices=torch.randperm(len(dataset)).tolist()
+  dataset_train=Subset(dataset, indices[:-valid_size])
+  dataset_valid=Subset(dataset, indices[-valid_size:])
+
+  return dataset_train, dataset_valid, dataset.classes
+
+def get_loaders(pretrained=True):
+  train, valid, classes=get_datasets()
+  print("# classes: ", len(classes))
+  print(classes)
+  train_loader=DataLoader(train, batch_size=BATCH_SIZE, shuffle=True)
+  valid_loader=DataLoader(valid, batch_size=BATCH_SIZE, shuffle=False)
+  return train_loader, valid_loader

@@ -1,0 +1,21 @@
+IMG_SIZE=(224, 224)
+VALID_SIZE=0.2 #20% of training set should go to validation set
+BATCH_SIZE=128
+
+import torchvision.transforms as torchvision_T
+
+def normalize(IMG_SIZE, pretrained=True):
+  if pretrained:
+    return torchvision_T.Normalize(mean=[0.485, 0.456, 0.406],
+            std=[0.229, 0.224, 0.225])
+  else:
+    return torchvision_T.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
+
+def train_transforms(IMG_SIZE, pretrained=True):
+  transforms=torchvision_T.Compose([torchvision_T.Resize(IMG_SIZE), torchvision_T.RandomGrayscale(p=0.4), torchvision_T.RandomHorizontalFlip(p=0.5),
+                                    torchvision_T.RandomAdjustSharpness(2, 0.5), torchvision_T.GaussianBlur((5, 9), (0.1, 5)), torchvision_T.ToTensor(), normalize(IMG_SIZE, pretrained)])
+  return transforms
+
+def valid_transforms(IMG_SIZE, pretrained=True):
+  transforms=torchvision_T.Compose([torchvision_T.Resize(IMG_SIZE), torchvision_T.ToTensor(), normalize(IMG_SIZE, pretrained)])
+  return transforms

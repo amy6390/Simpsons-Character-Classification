@@ -1,0 +1,28 @@
+def valid_step(model, loader, epoch, criterion):
+  model.eval()
+  valid_loss=0.0
+  valid_correct=0
+  counter=0
+  with torch.no_grad():
+    for i, data in tqdm(enumerate(loader), desc=f"valid :: epoch {str(epoch)}", total=len(loader)):
+      counter+=1
+
+      #run data through the model
+      img, labels=data
+      img=img.to(device)
+      labels=labels.to(device)
+      preds=model(img).detach()
+
+      #calculate loss
+      loss=criterion(preds, labels)
+      valid_loss+=loss.item()
+
+      #calculating accuracy
+      _, preds=torch.max(preds.data, 1)
+      valid_correct+=(preds==labels).sum().item()
+
+  #epoch statistics
+  epoch_loss=valid_loss/counter #mean loss
+  epoch_acc=100.*(valid_correct/len(loader.dataset))
+
+  return epoch_loss, epoch_acc
